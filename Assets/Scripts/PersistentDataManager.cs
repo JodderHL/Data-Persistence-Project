@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class PersistentDataManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class PersistentDataManager : MonoBehaviour
     private string _currentName;
     private string _name = "Name";
     private int _highscore = 0;
+    private string _path;
 
     public string CurrentName
     {
@@ -51,6 +53,8 @@ public class PersistentDataManager : MonoBehaviour
             return;
         } else
         {
+            _path = Application.persistentDataPath + "/safefile.json";
+            LoadFromFile(_path);
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
@@ -68,5 +72,27 @@ public class PersistentDataManager : MonoBehaviour
         SaveData data = new SaveData();
         data.Name = _name;
         data.Score = _highscore;
+        SaveToFile(data);
     }
+
+    private void SaveToFile(SaveData data)
+    {
+        
+        string json = JsonUtility.ToJson(data);
+
+        File.WriteAllText(_path, json);
+    }
+
+    private void LoadFromFile(string path)
+    {
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+            _highscore = data.Score;
+            _name=data.Name;
+        }
+    }
+    
 }
