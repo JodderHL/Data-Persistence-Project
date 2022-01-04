@@ -70,6 +70,7 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        PersistentDataManager.getInstance().SetScore(PersistentDataManager.getInstance().CurrentName, m_Points);
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
